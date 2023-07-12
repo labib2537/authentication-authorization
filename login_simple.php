@@ -3,13 +3,13 @@
 $login = false;
 $error = false;
 
-if($_SERVER["REQUEST_METHOD"]=="POST"){
+if(strtoupper($_SERVER["REQUEST_METHOD"])=="POST"){
 	
 	include 'partials/_dbconnect.php';
 	$email = $_POST["email"];
 	$password = $_POST["pass"];
 	
-    $sql = "Select * from users where email='$email' ";
+    $sql = "SELECT * FROM users WHERE email='$email' ";
 	$result = mysqli_query($connect, $sql);
 	$num = mysqli_num_rows($result);
 	if($num==1){

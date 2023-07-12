@@ -1,7 +1,7 @@
 <?php
 $alert = false;
 $error = false;
-if($_SERVER["REQUEST_METHOD"]=="POST"){
+if(strtoupper($_SERVER["REQUEST_METHOD"])=="POST"){
 	
 	include 'partials/_dbconnect.php';
 	$name = $_POST["name"];
@@ -10,7 +10,7 @@ if($_SERVER["REQUEST_METHOD"]=="POST"){
 	$cpassword = $_POST["cpass"];
 	$role = 'user';
 	
-	$existSql = "Select * FROM `users` WHERE email='$email' ";
+	$existSql = "SELECT * FROM `users` WHERE email='$email' ";
 	$result = mysqli_query($connect, $existSql);
 	$numExitsRows = mysqli_num_rows($result);
 	if($numExitsRows > 0){
