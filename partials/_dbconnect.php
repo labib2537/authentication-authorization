@@ -5,10 +5,8 @@ $username = "root";
 $password = "";
 $database = "user";
 
-$connect = mysqli_connect($server, $username, $password, $database);
-
-if(!$connect){
-//     echo "success";
-// }else{
-    die("error". mysqli_connect_error());
+try {
+    $pdo = new PDO("mysql:host=$server;dbname=$database", $username, $password);
+} catch (PDOException $e) {
+    die("Error: " . $e->getMessage());
 }

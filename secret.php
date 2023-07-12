@@ -42,15 +42,14 @@ if(!isset($_SESSION['loggedin']) || $_SESSION['loggedin']!=true){
 </head>
 
 <body>
-<?php 
-// print_r($_SESSION); 
+
+<?php
+// print_r($_SESSION);
 include 'partials/_dbconnect.php';
-$email =  $_SESSION['email'];
-$stmt = $connect->prepare("SELECT role FROM users WHERE email = ?");
-$stmt->bind_param("s", $email);
-$stmt->execute();
-$result = $stmt->get_result();
-$user = $result->fetch_assoc();
+$email = $_SESSION['email'];
+$stmt = $pdo->prepare("SELECT role FROM users WHERE email = ?");
+$stmt->execute([$email]);
+$user = $stmt->fetch(PDO::FETCH_ASSOC);
 
 if ($user) {
     $role = $user['role'];
@@ -59,10 +58,11 @@ if ($user) {
     echo "User not found";
 }
 
-// Close the database connection
-$stmt->close();
-$connect->close();
+// Close the database connection (PDO automatically closes the connection)
+$stmt = null;
+$pdo = null;
 ?>
+
 
 
 <div class="navbar navbar-expand-md navbar-dark bg-indigo navbar-static">

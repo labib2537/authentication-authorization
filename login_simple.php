@@ -3,35 +3,32 @@
 $login = false;
 $error = false;
 
-if(strtoupper($_SERVER["REQUEST_METHOD"])=="POST"){
-	
-	include 'partials/_dbconnect.php';
-	$email = $_POST["email"];
-	$password = $_POST["pass"];
-	
-    $sql = "SELECT * FROM users WHERE email='$email' ";
-	$result = mysqli_query($connect, $sql);
-	$num = mysqli_num_rows($result);
-	if($num==1){
-		if($row=mysqli_fetch_assoc($result)){
-			if(password_verify($password, $row['password'])){
-				$login = true;
-				session_start();
-				$_SESSION['loggedin'] = true;
-				$_SESSION['email'] = $email;
-				header("location: secret.php");
-			}
-			else{
-				$error = " Incorrect Password";
-			}
-		}
-		
-	}
-	else{
-		$error = " I don't know you. Please register";
-	}
-}
+if (strtoupper($_SERVER["REQUEST_METHOD"]) == "POST") {
+    include 'partials/_dbconnect.php';
+    $email = $_POST["email"];
+    $password = $_POST["pass"];
 
+    $sql = "SELECT * FROM users WHERE email=:email";
+    $statement = $pdo->prepare($sql);
+    $statement->bindParam(':email', $email, PDO::PARAM_STR);
+    $statement->execute();
+    $row = $statement->fetch(PDO::FETCH_ASSOC);
+    
+    if ($row) {
+        if (password_verify($password, $row['password'])) {
+            $login = true;
+            session_start();
+            $_SESSION['loggedin'] = true;
+            $_SESSION['email'] = $email;
+            header("location: secret.php");
+            exit();
+        } else {
+            $error = "Incorrect Password";
+        }
+    } else {
+        $error = "I don't know you. Please register";
+    }
+}
 ?>
 
 <!DOCTYPE html>

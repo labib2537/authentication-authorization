@@ -1,37 +1,45 @@
 <?php
 $alert = false;
 $error = false;
-if(strtoupper($_SERVER["REQUEST_METHOD"])=="POST"){
-	
-	include 'partials/_dbconnect.php';
-	$name = $_POST["name"];
-	$email = $_POST["email"];
-	$password = $_POST["pass"];
-	$cpassword = $_POST["cpass"];
-	$role = 'user';
-	
-	$existSql = "SELECT * FROM `users` WHERE email='$email' ";
-	$result = mysqli_query($connect, $existSql);
-	$numExitsRows = mysqli_num_rows($result);
-	if($numExitsRows > 0){
-		$error = " Credential already exist";
-	}else{
-		if(($password==$cpassword)){
-			$hash = password_hash($password, PASSWORD_DEFAULT);
-			$sql = "INSERT INTO `users` (`name`, `email`, `password`, `role`, `created_at`) 
-			VALUES ('$name', '$email', '$hash', '$role', current_timestamp())";
-			$result = mysqli_query($connect, $sql);
-			if($result){
-				$alert = true;
-			}
-		}else{
-			$error = " Password doesn't match";
-		}
-	}
-	
-}
 
+if (strtoupper($_SERVER["REQUEST_METHOD"]) == "POST") {
+    include 'partials/_dbconnect.php';
+    $name = $_POST["name"];
+    $email = $_POST["email"];
+    $password = $_POST["pass"];
+    $cpassword = $_POST["cpass"];
+    $role = 'user';
+
+    $existSql = "SELECT * FROM `users` WHERE email=:email";
+    $stmt = $pdo->prepare($existSql);
+    $stmt->bindParam(':email', $email, PDO::PARAM_STR);
+    $stmt->execute();
+    $numExistRows = $stmt->rowCount();
+
+    if ($numExistRows > 0) {
+        $error = " Credential already exists";
+    } else {
+        if ($password == $cpassword) {
+            $hash = password_hash($password, PASSWORD_DEFAULT);
+            $sql = "INSERT INTO `users` (`name`, `email`, `password`, `role`, `created_at`) 
+                    VALUES (:name, :email, :hash, :role, current_timestamp())";
+            $stmt = $pdo->prepare($sql);
+            $stmt->bindParam(':name', $name, PDO::PARAM_STR);
+            $stmt->bindParam(':email', $email, PDO::PARAM_STR);
+            $stmt->bindParam(':hash', $hash, PDO::PARAM_STR);
+            $stmt->bindParam(':role', $role, PDO::PARAM_STR);
+            $result = $stmt->execute();
+
+            if ($result) {
+                $alert = true;
+            }
+        } else {
+            $error = " Password doesn't match";
+        }
+    }
+}
 ?>
+
 
 
 
