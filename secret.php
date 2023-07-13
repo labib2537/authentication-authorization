@@ -106,8 +106,10 @@ $pdo = null;
 		</div>
 	</div>
 
-	<center>
-<h5 class="my-3">Secret Page</h5></center>
+		<div class="text-center">
+		<h5 class="my-3">Secret Page</h5>
+		</div>
+
 
 
 <div class="row m-2">		
